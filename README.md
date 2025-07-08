@@ -27,11 +27,11 @@ Finally, VM3, configured with IP 10.0.2.150 and MAC 08:00:27:9a:72:54, represent
 
 ![Testbed platform](images/Testbed.png)
 
-__Figure 1. Testbed platform__
+_Figure 1. Testbed platform_
 
 ## Attack by ABORT packet
 
-Running attack:
+Running the attack:
 
 ```bash
 $ sudo -E python3 abort_attack.py 
@@ -41,21 +41,19 @@ $ sudo -E python3 abort_attack.py
 
 ![Abort attack](images/FlexRIC-abort.png)
 
-__Figure 2. ABORT attack__
+_Figure 2. ABORT attack_
 
 ## Attack by SHUTDOWN packet
 
-Running attack:
+Running the attack:
 
 ```bash
 $ sudo -E python3 shutdown_attack.py 
 ```
 
-La **Figura 3** muestra una captura de Wireshark mostrando la ejecución del ataque SHUTDOWN. En la trama 15, el attacker node suplanta la identidad del cliente SCTP y envia una paquete SHUTDOWN en su nombre. De manera similar al ataque ABORT, se puede observar la direccion MAC source para verificar que quien envia el paquete es el attacker node. Al recibir el paquete SHUTDOWN, el servidor inicia el proceso de finalización de la asociacion SCTP enviando el paquete SHUTDOWN_ACK (trama 16). Como el cliente desconoce del proceso llevado a cabo por el attacker node, no responde al SHUTDOWN_ACK. En su lugar el atacker node responde con el paquete SHUTDOWN_COMPLETE, haciendo que el servidor de por finalizada la asociación. Mientras tanto el cliente continua con su proceso habitual de enviar paquetes HEARTBEAT (trama 21). Esto es detectado por el servidor como una anomalia y envía el paquete ABORT (trama 21) al cliente para finalizar de manera abrupta la asociación.
-
-Figure 3 shows a Wireshark capture depicting the execution of the SHUTDOWN attack. In frame 15, the attacker node spoofs the SCTP client and sends a SHUTDOWN packet on its behalf. Similarly to the ABORT attack, the source MAC address can be inspected to verify that the packet is sent by the attacker node. Upon receiving the SHUTDOWN packet, the server initiates the SCTP association termination process by sending a SHUTDOWN_ACK packet (frame 16). Since the client is unaware of the process initiated by the attacker node, it does not respond to the SHUTDOWN_ACK. Instead, the attacker node responds with a SHUTDOWN_COMPLETE packet, causing the server to consider the association terminated. Meanwhile, the client continues its usual process of sending HEARTBEAT packets (frame 21). The server detects this as an anomaly and sends an ABORT packet (frame 21) to the client in order to abruptly terminate the association.
+**Figure 3** shows a Wireshark capture depicting the execution of the SHUTDOWN attack. In frame 15, the attacker node spoofs the SCTP client and sends a SHUTDOWN packet on its behalf. Similarly to the ABORT attack, the source MAC address can be inspected to verify that the packet is sent by the attacker node. Upon receiving the SHUTDOWN packet, the server initiates the SCTP association termination process by sending a SHUTDOWN_ACK packet (frame 16). Since the client is unaware of the process initiated by the attacker node, it does not respond to the SHUTDOWN_ACK. Instead, the attacker node responds with a SHUTDOWN_COMPLETE packet, causing the server to consider the association terminated. Meanwhile, the client continues its usual process of sending HEARTBEAT packets (frame 21). The server detects this as an anomaly and sends an ABORT packet (frame 21) to the client in order to abruptly terminate the association.
 
 ![Shutdown attack](images/FlexRIC-abort.png)
 
-__Figure 3. SHUTDOWN attack__
+_Figure 3. SHUTDOWN attack_
 
