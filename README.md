@@ -17,6 +17,33 @@ Scapy offers for low-level network packet construction and manipulation, allowin
 > - Configuring the local user's environment variables to enable script execution as the root user.
 
 
+## FlexRIC
+
+The instructions for installing the FlexRIC components are described in its [documentation](https://gitlab.eurecom.fr/mosaic5g/flexric). Essentially, the components must be configured and executed using the following commands:
+
+- Configuration of the near-RT RIC and the E2 Node agent:
+
+```bash
+~/flexric$ nano flexric.conf
+[NEAR-RIC]
+NEAR_RIC_IP = 10.10.0.78
+
+[XAPP]
+DB_DIR = /tmp/
+```
+
+- Running the near-RT RIC, which functions as the SCTP server:
+
+```bash
+~/flexric$ ./build/examples/ric/nearRT-RIC -c ./flexric.conf 
+```
+
+- Running the E2 Node agent, which functions as the SCTP client:
+
+```bash
+~/flexric$ ./build/examples/emulator/agent/emu_agent_gnb -c ./flexric.conf 
+```
+
 ## Testbed platform 
 
 The experiments can be carried out using a testbed platform specifically designed for this purpose, as illustrated in **Figure 1**. This platform consists of three virtual machines (VMs) deployed on the VirtualBox hypervisor, all interconnected through a Host-only network with subnet address 10.0.2.0/24. 
