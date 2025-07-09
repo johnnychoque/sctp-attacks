@@ -88,4 +88,5 @@ _Figure 3. SHUTDOWN attack_
 - [Johnny Choque (johnny.choque@unican.es)](mailto:johnny.choque@unican.es)
 - [Alberto Eloy García (alberto.garcia@unican.es)](mailto:alberto.garcia@unican.es)
 
-
+## Acknowledgments
+This work has been supported by the European Commission, European Cybersecurity Competence Centre (ECCC), under grant agreement \#DIGITAL-ECCC-2022-CYBER-03-101127973, 5G-TACTIC project.
