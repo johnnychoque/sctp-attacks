@@ -1,5 +1,7 @@
 # SCTP attacks
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15847555.svg)](https://doi.org/10.5281/zenodo.15847555)
+
 This repository contains Python scripts that implement various attacks against the SCTP protocol using the **Scapy** library. To evaluate the effectiveness of these attacks, a testbed platform was developed utilizing components from FlexRIC, an open-source implementation of the O-RAN architecture. FlexRIC essentially comprises two components: the near-RT RIC and the E2 node.
 
 ## Scapy library
