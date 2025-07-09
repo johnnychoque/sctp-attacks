@@ -85,7 +85,7 @@ $ sudo -E python3 shutdown_attack.py
 _Figure 3. SHUTDOWN attack_
 
 ## Contact
-- [Johnny Choque (jchoque@unican.es)](mailto:johnny.choque@unican.es)
+- [Johnny Choque (johnny.choque@unican.es)](mailto:johnny.choque@unican.es)
 - [Alberto Eloy García (alberto.garcia@unican.es)](mailto:alberto.garcia@unican.es)
 
 
